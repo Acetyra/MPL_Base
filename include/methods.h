@@ -35,9 +35,16 @@ enum Status
     STATUS_NONE,
 };
 
+enum ButtonStates
+{
+    BUTTON_LONGPRESSED,
+    BUTTON_SHORTPRESSED,
+    BUTTON_UNKNOWN,
+};
+
 
 void handleWiFiClient(void);
-void checkButton(void);
+ButtonStates checkButton(void);
 long readMic(void);
 void init(void);
 

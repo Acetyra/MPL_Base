@@ -1,23 +1,30 @@
 #include "methods.h"
 
-
-
-unsigned int mill = 0;
-
 WiFiClient client;
 
 void setup()
 {
   // put your setup code here, to run once:
- init();
+  init();
 }
 
 void loop()
 {
   // put your main code here, to run repeatedly:
   client = server.available(); // listen for incoming clients
-  if (client)                             // if you get a client
+  if (client)                  // if you get a client
   {
-    handleWiFiClient();   
+    handleWiFiClient();
+  }
+  switch (checkButton())
+  {
+  case BUTTON_SHORTPRESSED:
+    break;
+
+  case BUTTON_LONGPRESSED:
+    break;
+
+  default:
+    break;
   }
 }

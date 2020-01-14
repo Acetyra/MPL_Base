@@ -23,7 +23,7 @@ void init(void)
   pinMode(MICPIN, INPUT);
 }
 
-void checkButton(void)
+ButtonStates checkButton(void)
 {
   static unsigned long mill = 0;
   static unsigned int buttonPressed = 0;
@@ -39,22 +39,24 @@ void checkButton(void)
   // Button released after being pressed
   if (digitalRead(BUTTONPIN) && buttonPressed)
   {
-
+    buttonPressed = 0;
     // Button was long pressed
     if (buttonPressed >= longPress)
     {
       Serial.println("long pressed");
+      return BUTTON_LONGPRESSED;
     }
 
     // Button was short pressed
     else if (buttonPressed >= shortPress)
     {
       Serial.println("short pressed");
+      return BUTTON_SHORTPRESSED;
     }
     else
     {
+      return BUTTON_UNKNOWN;
     }
-    buttonPressed = 0;
   }
 }
 
