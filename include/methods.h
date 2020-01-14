@@ -11,6 +11,8 @@
 
 extern const char *udpAddress;
 extern const int udpPort;
+extern const char *ssid;
+extern const char *password;
 
 extern WiFiServer server;
 extern WiFiUDP udp;
@@ -37,6 +39,7 @@ enum Status
 void handleWiFiClient(void);
 void checkButton(void);
 long readMic(void);
+void init(void);
 
 void sendData(TargetClient target, Status status);
 void sendData(TargetClient target, Status status, unsigned int red, unsigned int green, unsigned int blue);

@@ -2,9 +2,26 @@
 
 const char *udpAddress = "192.168.4.255";
 const int udpPort = 3333;
+const char *ssid = "MPL";
+const char *password = "123456789";
 
 WiFiServer server(80);
 WiFiUDP udp;
+
+void init(void)
+{
+  Serial.begin(115200);
+  Serial.println("Configuring access point...");
+  WiFi.softAP(ssid, password);
+  IPAddress myIP = WiFi.softAPIP();
+  Serial.print("AP IP address: ");
+  Serial.println(myIP);
+  udp.begin(myIP, udpPort);
+  server.begin();
+  Serial.println("Server started");
+  pinMode(BUTTONPIN, INPUT);
+  pinMode(MICPIN, INPUT);
+}
 
 void checkButton(void)
 {
