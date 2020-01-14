@@ -27,8 +27,8 @@ enum TargetClient
 
 enum Status
 {
-    STATUS_ENABLE,
-    STATUS_DISABLE,
+    STATUS_MUSIC,
+    STATUS_OFF,
     STATUS_COLOR,
     STATUS_NONE,
 };

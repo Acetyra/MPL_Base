@@ -117,48 +117,42 @@ void handleWiFiClient(void)
       {                   // if you got anything else but a carriage return character,
         currentLine += c; // add it to the end of the currentLine
       }
-      // Check to see if the client request was "GET /H" or "GET /L":
+      
+      /***** Client-01 High *****/
       if (currentLine.endsWith("GET /C01H"))
       {
-        udp.beginPacket(udpAddress, udpPort);
-        udp.printf("C1H");
-        udp.endPacket();
-      } // Client-01 High
+        sendData(CLIENT_LIGHTTOWER_1, STATUS_COLOR);
+      } 
+
+      /***** Client-02 High *****/
       if (currentLine.endsWith("GET /C02H"))
       {
-        udp.beginPacket(udpAddress, udpPort);
-        udp.printf("C2H");
-        udp.endPacket();
-      } // Client-02 High
+        sendData(CLIENT_LIGHTTOWER_2, STATUS_COLOR);
+      } 
 
+      /***** Client-01 Low *****/
       if (currentLine.endsWith("GET /C01L"))
       {
-        udp.beginPacket(udpAddress, udpPort);
-        udp.printf("C1L");
-        udp.endPacket();
-      } // Client-01 Low
+        sendData(CLIENT_LIGHTTOWER_1, STATUS_OFF);
+      }
+
+      /***** Client-02 Low *****/
       if (currentLine.endsWith("GET /C02L"))
       {
-        udp.beginPacket(udpAddress, udpPort);
-        udp.printf("C2L");
-        udp.endPacket();
-      } // Client-02 Low
+        sendData(CLIENT_LIGHTTOWER_2, STATUS_OFF);
+      }
 
+      /***** All Clients High *****/
       if (currentLine.endsWith("GET /CAON"))
       {
-        udp.beginPacket(udpAddress, udpPort);
-        udp.printf("CAH");
-        udp.endPacket();
-      } // All Clients High
+        sendData(CLIENT_ALL_LIGHTTOWER, STATUS_MUSIC);
+      }
+
+      /***** All Clients Low *****/
       if (currentLine.endsWith("GET /CAOFF"))
       {
-        udp.beginPacket(udpAddress, udpPort);
-        //udp.printf("10");
-        udp.print(10);
-        udp.print(";");
-        udp.print(5);
-        udp.endPacket();
-      } // All Clients Low
+        sendData(CLIENT_ALL_LIGHTTOWER, STATUS_OFF);
+      }
     }
   }
   // close the connection:
