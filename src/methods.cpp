@@ -10,20 +10,28 @@ void checkButton(void)
 {
   static unsigned long mill = 0;
   static unsigned int buttonPressed = 0;
+
+  // button pressed and at least 1ms passed
   if (!digitalRead(BUTTONPIN) && (mill != millis()))
-  { // button pressed and at least 1ms passed
+  {
     buttonPressed++;
     mill = millis();
     //Serial.println(buttonPressed);
   }
+
+  // Button released after being pressed
   if (digitalRead(BUTTONPIN) && buttonPressed)
-  { // button released
+  {
+
+    // Button was long pressed
     if (buttonPressed >= longPress)
-    { // button was long pressed
+    {
       Serial.println("long pressed");
     }
+
+    // Button was short pressed
     else if (buttonPressed >= shortPress)
-    { // button was short pressed
+    {
       Serial.println("short pressed");
     }
     else
@@ -117,18 +125,18 @@ void handleWiFiClient(void)
       {                   // if you got anything else but a carriage return character,
         currentLine += c; // add it to the end of the currentLine
       }
-      
+
       /***** Client-01 High *****/
       if (currentLine.endsWith("GET /C01H"))
       {
         sendData(CLIENT_LIGHTTOWER_1, STATUS_COLOR);
-      } 
+      }
 
       /***** Client-02 High *****/
       if (currentLine.endsWith("GET /C02H"))
       {
         sendData(CLIENT_LIGHTTOWER_2, STATUS_COLOR);
-      } 
+      }
 
       /***** Client-01 Low *****/
       if (currentLine.endsWith("GET /C01L"))
