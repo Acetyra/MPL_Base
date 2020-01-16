@@ -58,6 +58,10 @@ ButtonStates checkButton(void)
       return BUTTON_UNKNOWN;
     }
   }
+  else
+  {
+    return BUTTON_UNKNOWN;
+  }
 }
 
 long readMic(void)
