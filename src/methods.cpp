@@ -10,7 +10,7 @@ WiFiUDP udp;
 
 void init(void)
 {
-  Serial.begin(9600);
+  Serial.begin(115200);
   Serial.println("Configuring access point...");
   WiFi.softAP(ssid, password);
   IPAddress myIP = WiFi.softAPIP();
