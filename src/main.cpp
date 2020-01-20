@@ -16,7 +16,7 @@ void loop()
   {
     handleWiFiClient();
   }
-  switch (checkButton())
+  switch (checkButton())      // ButtonPressed?
   {
   case BUTTON_SHORTPRESSED:
     break;
