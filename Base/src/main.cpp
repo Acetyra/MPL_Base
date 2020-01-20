@@ -1,5 +1,3 @@
-//HALLO DAS IST EIN TEST
-
 #include "methods.h"
 
 WiFiClient client;
