@@ -61,6 +61,7 @@ ButtonStates checkButton(void)
 long readMic(void)
 {
   static unsigned long mill = millis();
+  long tmp = -1;
   if (millis() - mill > SAMPLINGRATE) // check if at least SAMPLINGRATE ms has passed
   {
     mill = millis();
@@ -68,14 +69,14 @@ long readMic(void)
     //Serial.println(analog);
     if (analog > LOWLEVEL)
     {
-      return analogRead(analog);
+      tmp = analogRead(analog);
     }
     else
     {
-      return 0;
+      tmp = 0;
     }
   }
-  return -1;
+  return tmp;
 }
 
 void handleWiFiClient(void)
