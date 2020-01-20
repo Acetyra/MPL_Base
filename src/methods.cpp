@@ -69,7 +69,7 @@ long readMic(void)
     //Serial.println(analog);
     if (analog > LOWLEVEL)
     {
-      tmp = analogRead(analog);
+      tmp = analogRead(analog);     // read Micvalue
     }
     else
     {
