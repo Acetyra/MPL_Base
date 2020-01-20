@@ -10,7 +10,7 @@ WiFiUDP udp;
 
 void init(void)
 {
-  Serial.begin(115200);
+  Serial.begin(9600);
   Serial.println("Configuring access point...");
   WiFi.softAP(ssid, password);
   IPAddress myIP = WiFi.softAPIP();
@@ -27,6 +27,7 @@ ButtonStates checkButton(void)
 {
   static unsigned long mill = 0;
   static unsigned int buttonPressed = 0;
+  ButtonStates tmp = BUTTON_UNKNOWN;
 
   // button pressed and at least 1ms passed
   if (!digitalRead(BUTTONPIN) && (mill != millis()))
@@ -44,20 +45,17 @@ ButtonStates checkButton(void)
     if (buttonPressed >= longPress)
     {
       Serial.println("long pressed");
-      return BUTTON_LONGPRESSED;
+      tmp = BUTTON_LONGPRESSED;
     }
 
     // Button was short pressed
     else if (buttonPressed >= shortPress)
     {
       Serial.println("short pressed");
-      return BUTTON_SHORTPRESSED;
-    }
-    else
-    {
-      return BUTTON_UNKNOWN;
+      tmp = BUTTON_SHORTPRESSED;
     }
   }
+  return tmp;
 }
 
 long readMic(void)
