@@ -1,5 +1,7 @@
 #include <WiFi.h>
 #include <Arduino.h>
+#include <Adafruit_ZeroFFT.h>
+#include <fix_fft.h>
 //#include <WiFiUdp.h>
 
 #define longPress 2000
@@ -45,7 +47,8 @@ enum ButtonStates
 
 void handleWiFiClient(void);
 ButtonStates checkButton(void);
-long readMic(void);
+void readMic(void);
+long transform(long sample[]);
 void init(void);
 
 void sendData(TargetClient target, Status status);

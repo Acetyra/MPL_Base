@@ -5,6 +5,15 @@ const int udpPort = 3333;
 const char *ssid = "MPL";
 const char *password = "123456789";
 
+int dataSize = 1024;                      //Größe eines Samples
+int cutOff = 100;                         //Frequenz-Bin bis wohin die leds reagieren sollen
+long data[dataSize] = {0};                //Array für Samples
+
+long spectrum[dataSize/2] = {0};          //Array für Spectrum
+
+
+
+
 WiFiServer server(80);
 WiFiUDP udp;
 
@@ -58,25 +67,40 @@ ButtonStates checkButton(void)
   return tmp;
 }
 
-long readMic(void)
+void readMic(void)
 {
-  static unsigned long mill = millis();
-  long tmp = -1;
-  if (millis() - mill > SAMPLINGRATE) // check if at least SAMPLINGRATE ms has passed
-  {
-    mill = millis();
-    int analog = analogRead(MICPIN); // read analog value
-    //Serial.println(analog);
-    if (analog > LOWLEVEL)
+  static int pos = 0;  
+if
+    if (pos < 1024)
     {
-      tmp = analog;     // read Micvalue
+      data[pos] = analogRead(MICPIN);
+      pos++;
     }
     else
     {
-      tmp = 0;
+      pos = 0;
+      transform(data);
+    }
+    
+}
+
+long transform(long sample[])
+{
+  long im[dataSize] = {0};
+  long maxval = 0;
+
+  fix_fft(sample, im, 10, 0);
+
+  for (int i = 0; i < (dataSize / 2); i++)
+  {
+    spectrum[i] = sqrt((sample[i] * sample[i]) + (im[i] * im[i]));
+
+    if (spectrum[i] > maxval)
+    {
+      maxval = spectrum[i];
     }
   }
-  return tmp;
+  return maxval;
 }
 
 void handleWiFiClient(void)
