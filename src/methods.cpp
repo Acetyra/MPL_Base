@@ -70,7 +70,7 @@ ButtonStates checkButton(void)
 void readMic(void)
 {
   static int pos = 0;  
-if
+//if                                      Zeitsteuerung implementieren
     if (pos < 1024)
     {
       data[pos] = analogRead(MICPIN);
