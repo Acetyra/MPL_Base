@@ -83,7 +83,7 @@ void readMic(void)
   }
   
   if(pos == dataSize)
-  {
+  {                                           //DC-Offset entfernen und Gain implementieren
     ZeroFFT(data, dataSize);
     Serial.println("---");
     Serial.println("Spectrum");
