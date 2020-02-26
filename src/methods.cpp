@@ -1,25 +1,23 @@
 #include "methods.h"
+#include "timer.h"
 
 const char *udpAddress = "192.168.4.255";
 const int udpPort = 3333;
 const char *ssid = "MPL";
 const char *password = "123456789";
 
-int dataSize = 1024;                      //Größe eines Samples
-int cutOff = 100;                         //Frequenz-Bin bis wohin die leds reagieren sollen
-long data[dataSize] = {0};                //Array für Samples
+const int dataSize = 128;  //Größe eines Samples
+int cutOff = 100;          //Frequenz-Bin bis wohin die leds reagieren sollen
+short int data[dataSize] = {0}; //Array für Samples
 
-long spectrum[dataSize/2] = {0};          //Array für Spectrum
-
-
-
+char spectrum[dataSize / 2] = {0}; //Array für Spectrum
 
 WiFiServer server(80);
 WiFiUDP udp;
 
 void init(void)
 {
-  Serial.begin(9600);
+  Serial.begin(115200);
   Serial.println("Configuring access point...");
   WiFi.softAP(ssid, password);
   IPAddress myIP = WiFi.softAPIP();
@@ -30,6 +28,12 @@ void init(void)
   Serial.println("Server started");
   pinMode(BUTTONPIN, INPUT);
   pinMode(MICPIN, INPUT);
+  pinMode(timerPin, OUTPUT);
+
+  timer = timerBegin(0, 80, true);
+  timerAttachInterrupt(timer, &onTimer, true);
+  timerAlarmWrite(timer, 1000, true);
+  timerAlarmEnable(timer);
 }
 
 ButtonStates checkButton(void)
@@ -69,38 +73,29 @@ ButtonStates checkButton(void)
 
 void readMic(void)
 {
-  static int pos = 0;  
-//if                                      Zeitsteuerung implementieren
-    if (pos < 1024)
-    {
-      data[pos] = analogRead(MICPIN);
-      pos++;
-    }
-    else
-    {
-      pos = 0;
-      transform(data);
-    }
-    
-}
-
-long transform(long sample[])
-{
-  long im[dataSize] = {0};
-  long maxval = 0;
-
-  fix_fft(sample, im, 10, 0);
-
-  for (int i = 0; i < (dataSize / 2); i++)
+  static int pos = 0;
+  //long maxval = 0;
+  
+  if(pos < dataSize)
   {
-    spectrum[i] = sqrt((sample[i] * sample[i]) + (im[i] * im[i]));
-
-    if (spectrum[i] > maxval)
-    {
-      maxval = spectrum[i];
-    }
+    data[pos] = analogRead(MICPIN);
+    Serial.println(data[pos]);
   }
-  return maxval;
+  
+  if(pos == dataSize)
+  {
+    ZeroFFT(data, dataSize);
+    Serial.println("---");
+    Serial.println("Spectrum");
+    for(int i = 0; i< dataSize; i++)
+    {
+      Serial.println(data[i]);
+    }
+    pos = 0;
+    Serial.println("---");
+    Serial.println("data");
+  }
+  pos++;
 }
 
 void handleWiFiClient(void)

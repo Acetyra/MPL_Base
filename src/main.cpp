@@ -1,4 +1,5 @@
 #include "methods.h"
+#include "timer.h"
 
 WiFiClient client;
 
@@ -7,7 +8,7 @@ void setup()
   // put your setup code here, to run once:
   init();
 }
-//PENIS
+
 void loop()
 {
   // put your main code here, to run repeatedly:
