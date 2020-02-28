@@ -7,7 +7,8 @@ const char *ssid = "MPL";
 const char *password = "123456789";
 
 const int dataSize = 128;  //Größe eines Samples
-int cutOff = 100;          //Frequenz-Bin bis wohin die leds reagieren sollen
+int cutOff = 100;          //Wert, bis zu welcher Frequenz reagiert wird
+int freqPerBin = 7;        //delta F pro Bin
 short int data[dataSize] = {0}; //Array für Samples
 
 char spectrum[dataSize / 2] = {0}; //Array für Spectrum
@@ -74,28 +75,61 @@ ButtonStates checkButton(void)
 void readMic(void)
 {
   static int pos = 0;
-  //long maxval = 0;
+  static int avg = 0;
+  static int cutOffBin = 0;
+  static short int maxValue = 0;
   
   if(pos < dataSize)
   {
     data[pos] = analogRead(MICPIN);
-    Serial.println(data[pos]);
+    avg += data[pos];                                 //alle Datenpunkte aufsummieren
+    //Serial.println(data[pos]);
   }
+
+  
   
   if(pos == dataSize)
-  {                                           //DC-Offset entfernen und Gain implementieren
-    ZeroFFT(data, dataSize);
-    Serial.println("---");
-    Serial.println("Spectrum");
-    for(int i = 0; i< dataSize; i++)
+  {   
+    
+                                          
+    avg = avg/dataSize;                           //Mittelwert des in data[] gespeicherten Signals berechnen
+    for(int i = 0; i < dataSize; i++)
     {
-      Serial.println(data[i]);
+      data[i] = (data[i] - avg) * 2;              //Mittelwert von jedem Datenpunkt abziehen
     }
+
+
+    ZeroFFT(data, dataSize);                      //FFT berechnen
+    // Serial.println("---");
+    // Serial.println("Spectrum");
+    // for(int i = 0; i< dataSize; i++)
+    // {
+    //   Serial.println(data[i]);
+    // }
+    // pos = 0;
+    // Serial.println("---");
+    // Serial.println("data");
+    cutOffBin = cutOff / freqPerBin;
+    maxValue = 0;
+    for(int i = 2; i <= cutOffBin; i++)
+    {
+      if(maxValue < data[i])
+      {
+        maxValue = data[i];
+      }
+    }
+    Serial.print("Max:: ");
+    Serial.println(maxValue);
+
     pos = 0;
-    Serial.println("---");
-    Serial.println("data");
+
   }
   pos++;
+}
+
+void readBattery(void)
+{
+
 }
 
 void handleWiFiClient(void)

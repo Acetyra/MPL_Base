@@ -49,7 +49,7 @@ enum ButtonStates
 void handleWiFiClient(void);
 ButtonStates checkButton(void);
 void readMic(void);
-long transform(long sample[]);
+void readBattery(void);
 void init(void);
 
 void sendData(TargetClient target, Status status);
