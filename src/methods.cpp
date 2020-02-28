@@ -10,6 +10,8 @@ const int dataSize = 128;  //Größe eines Samples
 int cutOff = 100;          //Wert, bis zu welcher Frequenz reagiert wird
 int freqPerBin = 7;        //delta F pro Bin
 short int data[dataSize] = {0}; //Array für Samples
+int batteryTimer = 0;
+int batteryLevel = 0;
 
 char spectrum[dataSize / 2] = {0}; //Array für Spectrum
 
@@ -29,6 +31,7 @@ void init(void)
   Serial.println("Server started");
   pinMode(BUTTONPIN, INPUT);
   pinMode(MICPIN, INPUT);
+  pinMode(battery, INPUT);
   pinMode(timerPin, OUTPUT);
 
   timer = timerBegin(0, 80, true);
@@ -74,10 +77,15 @@ ButtonStates checkButton(void)
 
 void readMic(void)
 {
-  static int pos = 0;
-  static int avg = 0;
-  static int cutOffBin = 0;
-  static short int maxValue = 0;
+  static int pos = 0;                            //Position im Datenarray
+  static int avg = 0;                            //Mittelwert des gesampleten Signals
+  static int cutOffBin = 0;                      //Frequenzbin, bis zu welchem reagiert wird
+  static short int maxFFTValue = 0;              //maximalwert der FFT
+  static float maxLedHight = 0;              //Maximaler Auschlag der Leds
+  static float currentLedHight = 0;
+  static float  ledHight = 0;                 //Aktueller Auschlag der Leds    
+  static const float numLed = 144;           //Anzahl der Leds
+  static int counter = 0;
   
   if(pos < dataSize)
   {
@@ -110,16 +118,33 @@ void readMic(void)
     // Serial.println("---");
     // Serial.println("data");
     cutOffBin = cutOff / freqPerBin;
-    maxValue = 0;
+    maxFFTValue = 0;
     for(int i = 2; i <= cutOffBin; i++)
     {
-      if(maxValue < data[i])
+      if(maxFFTValue < data[i])
       {
-        maxValue = data[i];
+        maxFFTValue = data[i];
       }
     }
-    Serial.print("Max:: ");
-    Serial.println(maxValue);
+    Serial.print("Max: ");
+    Serial.println(maxFFTValue);
+
+    if(maxLedHight == 0)
+    {
+      maxLedHight = (currentLedHight * 1.2);
+    }
+    
+    if(currentLedHight > maxLedHight * 0.8)
+    {
+      counter++;
+      if (counter > 5000)
+      {
+        maxLedHight = (currentLedHight * 1.2);
+      }
+    }
+    ledHight = (currentLedHight/maxLedHight) * numLed;
+
+    
 
     pos = 0;
 
@@ -129,7 +154,17 @@ void readMic(void)
 
 void readBattery(void)
 {
+  if(batteryTimer > 120000)                   //120 Sekunden warten
+  {
+    batteryLevel = analogRead(battery);                              //
+    batteryTimer = 0;
+  }
+  batteryTimer++;
 
+  if(batteryLevel < 1)
+  {
+    //--------------------------------------------------------
+  }
 }
 
 void handleWiFiClient(void)
