@@ -11,6 +11,7 @@
 #define timerPin 33
 #define SAMPLINGRATE 10 // 10ms
 #define LOWLEVEL 10
+#define battery 34
 
 extern const char *udpAddress;
 extern const int udpPort;
