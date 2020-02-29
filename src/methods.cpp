@@ -126,7 +126,7 @@ void readMic(void)
         maxFFTValue = data[i];
       }
     }
-    
+    currentLedHight = maxFFTValue;
     Serial.println(maxFFTValue);
 
     if(maxLedHight == 0)
