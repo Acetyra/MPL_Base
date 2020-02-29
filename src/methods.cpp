@@ -7,7 +7,7 @@ const char *ssid = "MPL";
 const char *password = "123456789";
 
 const int dataSize = 128;  //Größe eines Samples
-int cutOff = 100;          //Wert, bis zu welcher Frequenz reagiert wird
+int cutOff = 150;          //Wert, bis zu welcher Frequenz reagiert wird
 int freqPerBin = 7;        //delta F pro Bin
 short int data[dataSize] = {0}; //Array für Samples
 int batteryTimer = 0;
@@ -126,7 +126,7 @@ void readMic(void)
         maxFFTValue = data[i];
       }
     }
-    Serial.print("Max: ");
+    
     Serial.println(maxFFTValue);
 
     if(maxLedHight == 0)
@@ -161,7 +161,7 @@ void readBattery(void)
   }
   batteryTimer++;
 
-  if(batteryLevel < 1)
+  if(batteryLevel < 1 && batteryTimer > 12345)
   {
     //--------------------------------------------------------
   }
