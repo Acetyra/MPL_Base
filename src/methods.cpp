@@ -85,7 +85,8 @@ void readMic(void)
   static float currentLedHight = 0;
   static float  ledHight = 0;                 //Aktueller Auschlag der Leds    
   static const float numLed = 144;           //Anzahl der Leds
-  static int counter = 0;
+  static int counterH = 0;
+  static int counterL = 0;
   
   if(pos < dataSize)
   {
@@ -136,12 +137,24 @@ void readMic(void)
     
     if(currentLedHight > maxLedHight * 0.8)
     {
-      counter++;
-      if (counter > 5000)
+      counterH++;
+      if (counterH > 5000)
       {
         maxLedHight = (currentLedHight * 1.2);
+        counterH = 0;
       }
     }
+
+     if(currentLedHight < maxLedHight * 0.4)
+    {
+      counterL++;
+      if (counterL > 5000)
+      {
+        maxLedHight = (currentLedHight * 1.2);
+        counterL = 0;
+      }
+    }
+
     ledHight = (currentLedHight/maxLedHight) * numLed;
 
     
