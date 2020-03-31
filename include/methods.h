@@ -50,8 +50,10 @@ enum ButtonStates
 void handleWiFiClient(void);
 ButtonStates checkButton(void);
 void readMic(void);
+void processData(void);
 void readBattery(void);
 void init(void);
 
 void sendData(TargetClient target, Status status);
+void sendData(TargetClient target, Status status, int value);
 void sendData(TargetClient target, Status status, unsigned int red, unsigned int green, unsigned int blue);

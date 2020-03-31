@@ -28,4 +28,7 @@ void loop()
   default:
     break;
   }
+
+  processData();
+
 }

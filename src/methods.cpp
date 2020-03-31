@@ -6,12 +6,14 @@ const int udpPort = 3333;
 const char *ssid = "MPL";
 const char *password = "123456789";
 
-const int dataSize = 128;  //Größe eines Samples
-int cutOff = 150;          //Wert, bis zu welcher Frequenz reagiert wird
-int freqPerBin = 7;        //delta F pro Bin
+const int dataSize = 128;       //Größe eines Samples
+int cutOff = 150;               //Wert, bis zu welcher Frequenz reagiert wird
+int freqPerBin = 7;             //delta F pro Bin
 short int data[dataSize] = {0}; //Array für Samples
 int batteryTimer = 0;
 int batteryLevel = 0;
+int ledHight = 0;
+bool dataFlag = 0;
 
 char spectrum[dataSize / 2] = {0}; //Array für Spectrum
 
@@ -77,65 +79,68 @@ ButtonStates checkButton(void)
 
 void readMic(void)
 {
-  static int pos = 0;                            //Position im Datenarray
-  static int avg = 0;                            //Mittelwert des gesampleten Signals
-  static int cutOffBin = 0;                      //Frequenzbin, bis zu welchem reagiert wird
-  static short int maxFFTValue = 0;              //maximalwert der FFT
-  static float maxLedHight = 0;              //Maximaler Auschlag der Leds
-  static float currentLedHight = 0;
-  static float  ledHight = 0;                 //Aktueller Auschlag der Leds    
-  static const float numLed = 144;           //Anzahl der Leds
-  static int counterH = 0;
-  static int counterL = 0;
-  
-  if(pos < dataSize)
+  static int pos = 0; //Position im Datenarray
+  static int avg = 0; //Mittelwert des gesampleten Signals
+
+  if (pos < dataSize)
   {
     data[pos] = analogRead(MICPIN);
-    avg += data[pos];                                 //alle Datenpunkte aufsummieren
+    avg += data[pos]; //alle Datenpunkte aufsummieren
     //Serial.println(data[pos]);
   }
 
-  
-  
-  if(pos == dataSize)
-  {   
-    
-                                          
-    avg = avg/dataSize;                           //Mittelwert des in data[] gespeicherten Signals berechnen
-    for(int i = 0; i < dataSize; i++)
+  if (pos == dataSize)
+  {
+
+    avg = avg / dataSize; //Mittelwert des in data[] gespeicherten Signals berechnen
+    for (int i = 0; i < dataSize; i++)
     {
-      data[i] = (data[i] - avg) * 2;              //Mittelwert von jedem Datenpunkt abziehen
+      data[i] = (data[i] - avg) * 2; //Mittelwert von jedem Datenpunkt abziehen
     }
 
+    pos = 0;
+    dataFlag = 1;
+  }
+  pos++;
+}
 
-    ZeroFFT(data, dataSize);                      //FFT berechnen
-    // Serial.println("---");
-    // Serial.println("Spectrum");
-    // for(int i = 0; i< dataSize; i++)
-    // {
-    //   Serial.println(data[i]);
-    // }
-    // pos = 0;
-    // Serial.println("---");
-    // Serial.println("data");
+void processData(void)
+{
+
+  if (dataFlag)
+  {
+    static int cutOffBin = 0;         //Frequenzbin, bis zu welchem reagiert wird
+    static short int maxFFTValue = 0; //maximalwert der FFT
+    static float maxLedHight = 200;     //Maximaler Auschlag der Leds
+    float currentLedHight = 0;        //Aktueller Auschlag der Leds
+    const float numLed = 144;         //Anzahl der Leds
+    static int counterH = 0;
+    static int counterL = 0;
+    static int counterAvg = 0;
+    static int avg = 0;
+
+    ZeroFFT(data, dataSize); //FFT berechnen
+
     cutOffBin = cutOff / freqPerBin;
     maxFFTValue = 0;
-    for(int i = 2; i <= cutOffBin; i++)
+
+    for (int i = 2; i <= cutOffBin; i++)
     {
-      if(maxFFTValue < data[i])
+      if (maxFFTValue < data[i])
       {
         maxFFTValue = data[i];
       }
     }
-    currentLedHight = maxFFTValue;
-    Serial.println(maxFFTValue);
 
-    if(maxLedHight == 0)
+    ledHight = maxFFTValue;
+    //Serial.println(maxFFTValue);
+    /*
+    if (maxLedHight == 0)
     {
       maxLedHight = (currentLedHight * 1.2);
     }
-    
-    if(currentLedHight > maxLedHight * 0.8)
+
+    if (currentLedHight > maxLedHight * 0.8)
     {
       counterH++;
       if (counterH > 5000)
@@ -145,7 +150,7 @@ void readMic(void)
       }
     }
 
-     if(currentLedHight < maxLedHight * 0.4)
+    if (currentLedHight < maxLedHight * 0.4)
     {
       counterL++;
       if (counterL > 5000)
@@ -154,29 +159,37 @@ void readMic(void)
         counterL = 0;
       }
     }
+    */
 
-    ledHight = (currentLedHight/maxLedHight) * numLed;
-
+    ledHight = (int)(((ledHight / maxLedHight) * numLed) + 0.5);
     
-
-    pos = 0;
-
+    avg += ledHight;
+    if (counterAvg == 0)
+    {
+      avg = avg / 1;
+      sendData(CLIENT_ALL_LIGHTTOWER, STATUS_MUSIC, avg);
+      Serial.println(avg);
+      counterAvg = 0;
+      avg = 0;
+    }
+    dataFlag = 0;
+    //counterAvg++;
   }
-  pos++;
 }
 
 void readBattery(void)
 {
-  if(batteryTimer > 120000)                   //120 Sekunden warten
+  if (batteryTimer > 120000) //120 Sekunden warten
   {
-    batteryLevel = analogRead(battery);                              //
+    batteryLevel = analogRead(battery); //
     batteryTimer = 0;
   }
   batteryTimer++;
 
-  if(batteryLevel < 1 && batteryTimer > 12345)
+  if (batteryLevel < 1 && batteryTimer > 12345)
   {
     //--------------------------------------------------------
+    
   }
 }
 
@@ -292,6 +305,15 @@ void sendData(TargetClient target, Status status)
   udp.beginPacket(udpAddress, udpPort);
   udp.print(target);
   udp.print(status);
+  udp.endPacket();
+}
+
+void sendData(TargetClient target, Status status, int value)
+{
+  udp.beginPacket(udpAddress, udpPort);
+  udp.print(target);
+  udp.print(status);
+  udp.print(value);
   udp.endPacket();
 }
 
