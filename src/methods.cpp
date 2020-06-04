@@ -7,7 +7,7 @@ const char *ssid = "MPL";
 const char *password = "123456789";
 
 const int dataSize = 128;       //Größe eines Samples
-int cutOff = 150;               //Wert, bis zu welcher Frequenz reagiert wird
+int cutOff = 100;               //Wert, bis zu welcher Frequenz reagiert wird
 int freqPerBin = 7;             //delta F pro Bin
 short int data[dataSize] = {0}; //Array für Samples
 int batteryTimer = 0;
@@ -162,18 +162,20 @@ void processData(void)
     */
 
     ledHight = (int)(((ledHight / maxLedHight) * numLed) + 0.5);
-    
-    avg += ledHight;
-    if (counterAvg == 0)
+    //Serial.println(ledHight);
+    /*avg += ledHight;
+    if (counterAvg == 1)
     {
-      avg = avg / 1;
-      sendData(CLIENT_ALL_LIGHTTOWER, STATUS_MUSIC, avg);
-      Serial.println(avg);
+      avg = avg / 2;
+      sendData(avg);
+      //Serial.println(avg);
       counterAvg = 0;
       avg = 0;
     }
+    */
+   sendData(ledHight);
     dataFlag = 0;
-    //counterAvg++;
+    counterAvg++;
   }
 }
 
@@ -298,6 +300,13 @@ void handleWiFiClient(void)
   // close the connection:
   client.stop();
   Serial.println("Client Disconnected.");
+}
+
+void sendData(int value)
+{
+  udp.beginPacket(udpAddress, udpPort);
+  udp.print(value);
+  udp.endPacket();
 }
 
 void sendData(TargetClient target, Status status)

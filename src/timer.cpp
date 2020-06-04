@@ -11,7 +11,7 @@ void IRAM_ATTR onTimer()
     portENTER_CRITICAL_ISR(&timerMux);
 
     readMic();
-    readBattery();
+    //readBattery();
     //timerausgang = !timerausgang;
     //digitalWrite(timerPin, timerausgang);
 
