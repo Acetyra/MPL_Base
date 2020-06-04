@@ -1,4 +1,5 @@
 #include "methods.h"
+#include "timer.h"
 
 WiFiClient client;
 
@@ -27,4 +28,7 @@ void loop()
   default:
     break;
   }
+
+  processData();
+
 }

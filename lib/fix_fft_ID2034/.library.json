@@ -1,0 +1,46 @@
+{
+    "name": "fix_fft", 
+    "version": "1.0", 
+    "keywords": [
+        "data", 
+        "processing"
+    ], 
+    "description": "A library for implementing fixed-point in-place Fast Fourier Transform on Arduino. It sacrifices precision and instead it is way faster than floating-point implementations.", 
+    "frameworks": [
+        "arduino"
+    ], 
+    "platforms": [
+        "atmelavr"
+    ], 
+    "authors": [
+        {
+            "email": "dbouras@ieee.org", 
+            "url": null, 
+            "maintainer": false, 
+            "name": "Dimitrios P. Bouras"
+        }, 
+        {
+            "email": "enrique@shapeoko.com", 
+            "url": null, 
+            "maintainer": true, 
+            "name": "Enrique Condes"
+        }
+    ], 
+    "repository": {
+        "type": "git", 
+        "url": "https://github.com/kosme/fix_fft"
+    }, 
+    "homepage": null, 
+    "export": {
+        "include": null, 
+        "exclude": [
+            "extras", 
+            "docs", 
+            "tests", 
+            "test", 
+            "*.doxyfile", 
+            "*.pdf"
+        ]
+    }, 
+    "id": 2034
+}

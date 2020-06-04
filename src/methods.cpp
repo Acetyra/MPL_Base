@@ -1,9 +1,21 @@
 #include "methods.h"
+#include "timer.h"
 
 const char *udpAddress = "192.168.4.255";
 const int udpPort = 3333;
 const char *ssid = "MPL";
 const char *password = "123456789";
+
+const int dataSize = 128;       //Größe eines Samples
+int cutOff = 100;               //Wert, bis zu welcher Frequenz reagiert wird
+int freqPerBin = 7;             //delta F pro Bin
+short int data[dataSize] = {0}; //Array für Samples
+int batteryTimer = 0;
+int batteryLevel = 0;
+int ledHight = 0;
+bool dataFlag = 0;
+
+char spectrum[dataSize / 2] = {0}; //Array für Spectrum
 
 WiFiServer server(80);
 WiFiUDP udp;
@@ -21,6 +33,13 @@ void init(void)
   Serial.println("Server started");
   pinMode(BUTTONPIN, INPUT);
   pinMode(MICPIN, INPUT);
+  pinMode(battery, INPUT);
+  pinMode(timerPin, OUTPUT);
+
+  timer = timerBegin(0, 80, true);
+  timerAttachInterrupt(timer, &onTimer, true);
+  timerAlarmWrite(timer, 1000, true);
+  timerAlarmEnable(timer);
 }
 
 ButtonStates checkButton(void)
@@ -58,25 +77,122 @@ ButtonStates checkButton(void)
   return tmp;
 }
 
-long readMic(void)
+void readMic(void)
 {
-  static unsigned long mill = millis();
-  long tmp = -1;
-  if (millis() - mill > SAMPLINGRATE) // check if at least SAMPLINGRATE ms has passed
+  static int pos = 0; //Position im Datenarray
+  static int avg = 0; //Mittelwert des gesampleten Signals
+
+  if (pos < dataSize)
   {
-    mill = millis();
-    int analog = analogRead(MICPIN); // read analog value
-    //Serial.println(analog);
-    if (analog > LOWLEVEL)
-    {
-      tmp = analog;     // read Micvalue
-    }
-    else
-    {
-      tmp = 0;
-    }
+    data[pos] = analogRead(MICPIN);
+    avg += data[pos]; //alle Datenpunkte aufsummieren
+    //Serial.println(data[pos]);
   }
-  return tmp;
+
+  if (pos == dataSize)
+  {
+
+    avg = avg / dataSize; //Mittelwert des in data[] gespeicherten Signals berechnen
+    for (int i = 0; i < dataSize; i++)
+    {
+      data[i] = (data[i] - avg) * 2; //Mittelwert von jedem Datenpunkt abziehen
+    }
+
+    pos = 0;
+    dataFlag = 1;
+  }
+  pos++;
+}
+
+void processData(void)
+{
+
+  if (dataFlag)
+  {
+    static int cutOffBin = 0;         //Frequenzbin, bis zu welchem reagiert wird
+    static short int maxFFTValue = 0; //maximalwert der FFT
+    static float maxLedHight = 200;     //Maximaler Auschlag der Leds
+    float currentLedHight = 0;        //Aktueller Auschlag der Leds
+    const float numLed = 144;         //Anzahl der Leds
+    static int counterH = 0;
+    static int counterL = 0;
+    static int counterAvg = 0;
+    static int avg = 0;
+
+    ZeroFFT(data, dataSize); //FFT berechnen
+
+    cutOffBin = cutOff / freqPerBin;
+    maxFFTValue = 0;
+
+    for (int i = 2; i <= cutOffBin; i++)
+    {
+      if (maxFFTValue < data[i])
+      {
+        maxFFTValue = data[i];
+      }
+    }
+
+    ledHight = maxFFTValue;
+    //Serial.println(maxFFTValue);
+    /*
+    if (maxLedHight == 0)
+    {
+      maxLedHight = (currentLedHight * 1.2);
+    }
+
+    if (currentLedHight > maxLedHight * 0.8)
+    {
+      counterH++;
+      if (counterH > 5000)
+      {
+        maxLedHight = (currentLedHight * 1.2);
+        counterH = 0;
+      }
+    }
+
+    if (currentLedHight < maxLedHight * 0.4)
+    {
+      counterL++;
+      if (counterL > 5000)
+      {
+        maxLedHight = (currentLedHight * 1.2);
+        counterL = 0;
+      }
+    }
+    */
+
+    ledHight = (int)(((ledHight / maxLedHight) * numLed) + 0.5);
+    //Serial.println(ledHight);
+    /*avg += ledHight;
+    if (counterAvg == 1)
+    {
+      avg = avg / 2;
+      sendData(avg);
+      //Serial.println(avg);
+      counterAvg = 0;
+      avg = 0;
+    }
+    */
+   sendData(ledHight);
+    dataFlag = 0;
+    counterAvg++;
+  }
+}
+
+void readBattery(void)
+{
+  if (batteryTimer > 120000) //120 Sekunden warten
+  {
+    batteryLevel = analogRead(battery); //
+    batteryTimer = 0;
+  }
+  batteryTimer++;
+
+  if (batteryLevel < 1 && batteryTimer > 12345)
+  {
+    //--------------------------------------------------------
+    
+  }
 }
 
 void handleWiFiClient(void)
@@ -186,11 +302,27 @@ void handleWiFiClient(void)
   Serial.println("Client Disconnected.");
 }
 
+void sendData(int value)
+{
+  udp.beginPacket(udpAddress, udpPort);
+  udp.print(value);
+  udp.endPacket();
+}
+
 void sendData(TargetClient target, Status status)
 {
   udp.beginPacket(udpAddress, udpPort);
   udp.print(target);
   udp.print(status);
+  udp.endPacket();
+}
+
+void sendData(TargetClient target, Status status, int value)
+{
+  udp.beginPacket(udpAddress, udpPort);
+  udp.print(target);
+  udp.print(status);
+  udp.print(value);
   udp.endPacket();
 }
 
