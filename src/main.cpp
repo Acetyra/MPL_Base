@@ -45,7 +45,7 @@ void loop()
       {
         average = 144;
       }
-      Serial.println(average);
+      //Serial.println(average);
       sendData((int)average);
       average = 0;
       i = 0;

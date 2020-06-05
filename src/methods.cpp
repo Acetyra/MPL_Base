@@ -1,4 +1,5 @@
 #include "methods.h"
+#include "timer.h"
 
 const char *udpAddress = "192.168.4.255";
 const int udpPort = 3333;
@@ -23,7 +24,7 @@ WiFiUDP udp;
 
 void init(void)
 {
-  Serial.begin(9600);
+  Serial.begin(115200);
   Serial.println("Configuring access point...");
   WiFi.softAP(ssid, password);
   IPAddress myIP = WiFi.softAPIP();
@@ -34,6 +35,13 @@ void init(void)
   Serial.println("Server started");
   pinMode(BUTTONPIN, INPUT);
   pinMode(MICPIN, INPUT);
+  pinMode(battery, INPUT);
+  pinMode(timerPin, OUTPUT);
+
+  timer = timerBegin(0, 80, true);
+  timerAttachInterrupt(timer, &onTimer, true);
+  timerAlarmWrite(timer, 1000, true);
+  timerAlarmEnable(timer);
 }
 
 ButtonStates checkButton(void)
@@ -75,6 +83,7 @@ void readMic(void)
 {
   long analogData = analogRead(MICPIN);
   micData = abs(analogData-1552);
+  Serial.println(micData);
 }
 
 void handleWiFiClient(void)
