@@ -77,27 +77,6 @@ void readMic(void)
   micData = abs(analogData-1552);
 }
 
-void processData(void)
-{
-  static unsigned long mill = millis();
-  long tmp = -1;
-  if (millis() - mill > SAMPLINGRATE) // check if at least SAMPLINGRATE ms has passed
-  {
-    mill = millis();
-    int analog = analogRead(MICPIN); // read analog value
-    //Serial.println(analog);
-    if (analog > LOWLEVEL)
-    {
-      tmp = analog;     // read Micvalue
-    }
-    else
-    {
-      tmp = 0;
-    }
-  }
-  return tmp;
-}
-
 void handleWiFiClient(void)
 {
   Serial.println("New Client."); // print a message out the serial port

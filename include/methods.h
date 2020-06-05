@@ -47,7 +47,7 @@ enum ButtonStates
 
 void handleWiFiClient(void);
 ButtonStates checkButton(void);
-long readMic(void);
+void readMic(void);
 void init(void);
 
 void sendData(int data);

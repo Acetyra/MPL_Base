@@ -26,14 +26,13 @@ void loop()
   case BUTTON_LONGPRESSED:
     break;
   }
-  
+
   if (timerAusgang)
   {
     static long average = 0;
     static int i = 0;
     average += micData;
     i++;
-    Serial.println(average);
     if (i > 23)
     {
       average = average / 25;
@@ -47,7 +46,7 @@ void loop()
         average = 144;
       }
       Serial.println(average);
-      sendData(average);
+      sendData((int)average);
       average = 0;
       i = 0;
     }
