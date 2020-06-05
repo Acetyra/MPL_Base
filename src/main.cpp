@@ -18,16 +18,25 @@ void loop()
   {
     handleWiFiClient();
   }
-
-  if (timer1ms)
+  switch (checkButton()) // ButtonPressed?
   {
-    static int average = 0;
+  case BUTTON_SHORTPRESSED:
+    break;
+
+  case BUTTON_LONGPRESSED:
+    break;
+  }
+  
+  if (timerAusgang)
+  {
+    static long average = 0;
     static int i = 0;
     average += micData;
     i++;
-    if (i > AVERAGETIME - 2)
+    Serial.println(average);
+    if (i > 23)
     {
-      average /= AVERAGETIME;
+      average = average / 25;
       average = sqrt(average * 250) - 55;
       if (average < 0)
       {
@@ -37,10 +46,11 @@ void loop()
       {
         average = 144;
       }
+      Serial.println(average);
       sendData(average);
       average = 0;
       i = 0;
     }
-    timer1ms = 0;
+    timerAusgang = 0;
   }
 }

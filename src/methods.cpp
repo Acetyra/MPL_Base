@@ -14,6 +14,8 @@ int batteryLevel = 0;
 int ledHight = 0;
 bool dataFlag = 0;
 
+long micData = 0;
+
 char spectrum[dataSize / 2] = {0}; //Array für Spectrum
 
 WiFiServer server(80);
@@ -69,7 +71,13 @@ ButtonStates checkButton(void)
   return tmp;
 }
 
-long readMic(void)
+void readMic(void)
+{
+  long analogData = analogRead(MICPIN);
+  micData = abs(analogData-1552);
+}
+
+void processData(void)
 {
   static unsigned long mill = millis();
   long tmp = -1;

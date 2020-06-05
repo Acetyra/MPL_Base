@@ -14,6 +14,7 @@ extern const char *udpAddress;
 extern const int udpPort;
 extern const char *ssid;
 extern const char *password;
+extern long micData;
 
 extern WiFiServer server;
 extern WiFiUDP udp;
