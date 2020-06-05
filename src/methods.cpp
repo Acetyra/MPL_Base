@@ -83,7 +83,6 @@ void readMic(void)
 {
   long analogData = analogRead(MICPIN);
   micData = abs(analogData-1552);
-  Serial.println(micData);
 }
 
 void handleWiFiClient(void)
