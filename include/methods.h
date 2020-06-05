@@ -45,13 +45,7 @@ enum ButtonStates
 
 void handleWiFiClient(void);
 ButtonStates checkButton(void);
-<<<<<<< Updated upstream
 long readMic(void);
-=======
-int readMic(void);
-void processData(void);
-void readBattery(void);
->>>>>>> Stashed changes
 void init(void);
 
 void sendData(TargetClient target, Status status);

@@ -1,7 +1,7 @@
 #include <Arduino.h>
 extern hw_timer_t *timer;
 extern portMUX_TYPE timerMux;
-extern int analogData;
-extern int timerAusgang;
+extern int micData;
+extern int timer1ms;
 
 void IRAM_ATTR onTimer();

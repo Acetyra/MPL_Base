@@ -1,9 +1,6 @@
 #include "methods.h"
-<<<<<<< Updated upstream
-=======
 #include "timer.h"
 #include <math.h>
->>>>>>> Stashed changes
 
 WiFiClient client;
 
@@ -32,8 +29,6 @@ void loop()
   default:
     break;
   }
-<<<<<<< Updated upstream
-=======
   if (timerAusgang)
   {
   static int average = 0;
@@ -53,5 +48,4 @@ void loop()
   }
   //processData();
 
->>>>>>> Stashed changes
 }

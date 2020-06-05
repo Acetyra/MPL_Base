@@ -5,8 +5,6 @@ const int udpPort = 3333;
 const char *ssid = "MPL";
 const char *password = "123456789";
 
-<<<<<<< Updated upstream
-=======
 const int dataSize = 64;       //Größe eines Samples
 int cutOff = 200;               //Wert, bis zu welcher Frequenz reagiert wird
 int freqPerBin = 16;             //delta F pro Bin
@@ -18,7 +16,6 @@ bool dataFlag = 0;
 
 char spectrum[dataSize / 2] = {0}; //Array für Spectrum
 
->>>>>>> Stashed changes
 WiFiServer server(80);
 WiFiUDP udp;
 
@@ -72,7 +69,6 @@ ButtonStates checkButton(void)
   return tmp;
 }
 
-<<<<<<< Updated upstream
 long readMic(void)
 {
   static unsigned long mill = millis();
@@ -83,68 +79,6 @@ long readMic(void)
     int analog = analogRead(MICPIN); // read analog value
     //Serial.println(analog);
     if (analog > LOWLEVEL)
-=======
-int readMic(void)
-{
-  double value = (double) analogRead(MICPIN);
-  value = abs(1552.0 - value);
-  value = (value / 2048 ) * 144.0;
-  if (value > 144) 
-  {
-    value = 144;
-  }
-  int daten = (int)value;
-  return daten;
-}
-
-void processData(void)
-{
-
-  if (dataFlag)
-  {
-    static int cutOffBin = 0;         //Frequenzbin, bis zu welchem reagiert wird
-    static short int maxFFTValue = 0; //maximalwert der FFT
-    static float maxLedHight = 200;     //Maximaler Auschlag der Leds
-    float currentLedHight = 0;        //Aktueller Auschlag der Leds
-    const float numLed = 144;         //Anzahl der Leds
-    static int counterH = 0;
-    static int counterL = 0;
-    static int counterAvg = 0;
-    static int avg = 0;
-
-    ZeroFFT(data, dataSize); //FFT berechnen
-
-    cutOffBin = cutOff / freqPerBin; 
-    maxFFTValue = 0;
-
-    for (int i = 2; i <= cutOffBin; i++)
-    {
-      if (maxFFTValue < data[i])
-      {
-        maxFFTValue = data[i];
-      }
-    }
-
-    ledHight = maxFFTValue;
-    //Serial.println(maxFFTValue);
-    /*
-    if (maxLedHight == 0)
-    {
-      maxLedHight = (currentLedHight * 1.2);
-    }
-
-    if (currentLedHight > maxLedHight * 0.8)
-    {
-      counterH++;
-      if (counterH > 5000)
-      {
-        maxLedHight = (currentLedHight * 1.2);
-        counterH = 0;
-      }
-    }
-
-    if (currentLedHight < maxLedHight * 0.4)
->>>>>>> Stashed changes
     {
       tmp = analog;     // read Micvalue
     }
