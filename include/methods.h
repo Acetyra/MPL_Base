@@ -5,9 +5,10 @@
 #define longPress 2000
 #define shortPress 100
 #define BUTTONPIN 25
-#define MICPIN 35       // only ADC1 can be used with WIFI+#+#+#+#+#+#
+#define MICPIN 35       // only ADC1 can be used with WIFI
 #define SAMPLINGRATE 10 // 10ms
 #define LOWLEVEL 10
+#define AVERAGETIME 25
 
 extern const char *udpAddress;
 extern const int udpPort;
@@ -48,5 +49,6 @@ ButtonStates checkButton(void);
 long readMic(void);
 void init(void);
 
+void sendData(int data);
 void sendData(TargetClient target, Status status);
 void sendData(TargetClient target, Status status, unsigned int red, unsigned int green, unsigned int blue);

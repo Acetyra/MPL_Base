@@ -18,34 +18,29 @@ void loop()
   {
     handleWiFiClient();
   }
-  switch (checkButton())      // ButtonPressed?
-  {
-  case BUTTON_SHORTPRESSED:
-    break;
 
-  case BUTTON_LONGPRESSED:
-    break;
-
-  default:
-    break;
-  }
-  if (timerAusgang)
+  if (timer1ms)
   {
-  static int average = 0;
-  static int i = 0;
-  average += analogData;
-  i++;
-  if (i > 23)
-  {
-    i = 0;
-    average = average / 25;
-    average = sqrt(average*250)-55;
-    if(average < 0) {average = 0;}
-    sendData(average);
-    average = 0;
+    static int average = 0;
+    static int i = 0;
+    average += micData;
+    i++;
+    if (i > AVERAGETIME - 2)
+    {
+      average /= AVERAGETIME;
+      average = sqrt(average * 250) - 55;
+      if (average < 0)
+      {
+        average = 0;
+      }
+      else if (average > 144)
+      {
+        average = 144;
+      }
+      sendData(average);
+      average = 0;
+      i = 0;
+    }
+    timer1ms = 0;
   }
-  timerAusgang = 0;
-  }
-  //processData();
-
 }

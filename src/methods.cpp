@@ -197,6 +197,13 @@ void handleWiFiClient(void)
   Serial.println("Client Disconnected.");
 }
 
+void sendData(int data)
+{
+  udp.beginPacket(udpAddress, udpPort);
+  udp.print(data);
+  udp.endPacket();
+}
+
 void sendData(TargetClient target, Status status)
 {
   udp.beginPacket(udpAddress, udpPort);
