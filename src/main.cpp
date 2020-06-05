@@ -29,9 +29,9 @@ void loop()
 
   if (timerAusgang)
   {
-    static long average = 0;
+    static double average = 0;
     static int i = 0;
-    average += micData;
+    average += (((double)micData / 2048.0) * 144.0);
     i++;
     if (i > 23)
     {
