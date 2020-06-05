@@ -36,7 +36,7 @@ void loop()
     if (i > 23)
     {
       average = average / 25;
-      average = sqrt(average * 250) - 55;
+      average = sqrt(average * 400) - 57 - (average/3);
       if (average < 0)
       {
         average = 0;
