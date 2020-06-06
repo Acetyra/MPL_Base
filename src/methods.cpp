@@ -6,9 +6,9 @@ const int udpPort = 3333;
 const char *ssid = "MPL";
 const char *password = "123456789";
 
-const int dataSize = 128;       //Größe eines Samples
-int cutOff = 100;               //Wert, bis zu welcher Frequenz reagiert wird
-int freqPerBin = 7;             //delta F pro Bin
+const int dataSize = 64;       //Größe eines Samples
+int cutOff = 150;               //Wert, bis zu welcher Frequenz reagiert wird
+int freqPerBin = 31;             //delta F pro Bin
 short int data[dataSize] = {0}; //Array für Samples
 int batteryTimer = 0;
 int batteryLevel = 0;
@@ -38,7 +38,7 @@ void init(void)
 
   timer = timerBegin(0, 80, true);
   timerAttachInterrupt(timer, &onTimer, true);
-  timerAlarmWrite(timer, 1000, true);
+  timerAlarmWrite(timer, 500, true);
   timerAlarmEnable(timer);
 }
 
