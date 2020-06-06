@@ -1,7 +1,8 @@
 #include <Arduino.h>
-#include "methods.h"
+#include "main.h"
 
-extern hw_timer_t *timer;
-extern portMUX_TYPE timerMux;
+extern bool readMicFlag;
+extern unsigned int readBatteryFlag;
 
+extern void initTimer();
 void IRAM_ATTR onTimer();

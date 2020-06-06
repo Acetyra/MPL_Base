@@ -1,13 +1,14 @@
 #include "FFT.h"
 
+short int data[DATASIZE] = {0}; //Array für Samples
+int ledHight;
 
-
-void processData(short int data[])
+void processData(void)
 {
     static int cutOffBin = 0;         //Frequenzbin, bis zu welchem reagiert wird
     static short int maxFFTValue = 0; //maximalwert der FFT
-    int ledHight;
-    static float maxLedHight = 200;     //Maximaler Auschlag der Leds
+    //Serial.println("Data wird geprocessed");
+    static float maxLedHight = 200; //Maximaler Auschlag der Leds
 
     ZeroFFT(data, DATASIZE); //FFT berechnen
 
@@ -25,6 +26,5 @@ void processData(short int data[])
     ledHight = maxFFTValue;
 
     ledHight = (int)(((ledHight / maxLedHight) * NUMLEDS) + 0.5);
-
-    sendData(ledHight);
+    sendDataFlag = true;
 }

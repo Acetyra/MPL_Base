@@ -26,11 +26,6 @@ enum ButtonStates
 };
 #endif /* WEBSERVERDIY_H */
 
-extern enum ButtonStates buttons;
-extern enum Status currentStatus;
-extern enum TargetClient targetedClient;
-
-
 
 void initWiFi(void);
 bool getServerAvailable(void);
