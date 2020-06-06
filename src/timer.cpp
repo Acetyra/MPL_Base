@@ -1,5 +1,5 @@
 #include "timer.h"
-#include "methods.h"
+
 
 hw_timer_t *timer = NULL;
 portMUX_TYPE timerMux = portMUX_INITIALIZER_UNLOCKED;
