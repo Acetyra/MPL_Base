@@ -1,5 +1,6 @@
 #include "Core0.h"
 
+
 void readMic(void);
 ButtonStates checkButton(void);
 void readBattery(void);
@@ -12,7 +13,7 @@ void Task1code(void *pvParameters)
 {
   for (;;)
   {
-    yield();
+  
     // listen for incoming clients
     if (getServerAvailable()) // if you get a client
     {
@@ -39,7 +40,6 @@ void Task1code(void *pvParameters)
     if (sendDataFlag)
     {
       sendData(ledHight);
-      //Serial.println(ledHight);
       sendDataFlag = 0;
     }
   }

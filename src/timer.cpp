@@ -8,7 +8,7 @@ unsigned int readBatteryFlag = 0;
 
 void initTimer(void)
 {
-  timer = timerBegin(0, 80, true);
+  timer = timerBegin(0, 8, true);
   timerAttachInterrupt(timer, &onTimer, true);
   timerAlarmWrite(timer, 1000, true);
   timerAlarmEnable(timer);

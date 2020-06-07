@@ -10,14 +10,17 @@ void setup()
   // put your setup code here, to run once:
   Serial.begin(115200);
   Serial.println("Configuring access point...");
+  //esp_task_wdt_init(2, false);
   initTimer();
+  disableCore0WDT();
+  disableCore1WDT();
+  disableLoopWDT();
   initWiFi();
   initCores();
   pinMode(BUTTONPIN, INPUT);
   pinMode(MICPIN, INPUT);
   pinMode(BATTERYPIN, INPUT);
-  disableCore0WDT();
-  disableCore1WDT();
+
 }
 
 void loop()

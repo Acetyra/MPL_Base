@@ -11,6 +11,7 @@
 #include <WiFi.h>
 #include <Arduino.h>
 #include "webServerDIY.h"
+#include <esp_task_wdt.h>
 
 #define longPress 2000
 #define shortPress 100
