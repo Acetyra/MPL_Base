@@ -40,7 +40,7 @@ void init(void)
 
   timer = timerBegin(0, 80, true);
   timerAttachInterrupt(timer, &onTimer, true);
-  timerAlarmWrite(timer, 1000, true);
+  timerAlarmWrite(timer, 100, true);
   timerAlarmEnable(timer);
 }
 

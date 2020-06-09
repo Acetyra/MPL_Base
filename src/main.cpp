@@ -4,6 +4,7 @@
 
 WiFiClient client;
 
+
 void setup()
 {
   // put your setup code here, to run once:
@@ -31,12 +32,22 @@ void loop()
   {
     static double average = 0;
     static int i = 0;
+    static int maxValue = 0;
+    static int minValue = 144;
+    if (micData < minValue)
+    {
+      minValue = micData;
+    }
+    else if (micData > maxValue)
+    {
+      maxValue = micData;
+    }
     average += (((double)micData / 2048.0) * 144.0);
     i++;
-    if (i > 23)
+    if (i > 98)
     {
-      average = average / 25;
-      average = sqrt(average * 400) - 57 - (average/3);
+      average = average / 100;
+      //average = sqrt(average * 400) - 57 - (average/3);
       if (average < 0)
       {
         average = 0;
